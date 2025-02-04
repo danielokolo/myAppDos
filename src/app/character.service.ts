@@ -1,6 +1,6 @@
-import { Injectable, inject } from "@angular/core"
-import { HttpClient } from "@angular/common/http"
-import type { Observable } from "rxjs"
+import { Injectable, inject } from "@angular/core";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import type { Observable } from "rxjs";
 
 /**
  * Servicio para manejar las operaciones relacionadas con los personajes de Rick and Morty
@@ -21,7 +21,7 @@ import type { Observable } from "rxjs"
  *    - HttpClient se inyecta usando la función 'inject' de Angular, evitando problemas con importaciones de tipo.
  *
  * 4. Métodos del servicio:
- *    - getCharacters(): Obtiene la lista de todos los personajes.
+ *    - getCharacters(page): Obtiene la lista de personajes para la página especificada.
  *    - getCharacter(id): Obtiene los detalles de un personaje específico.
  *    - Ambos métodos devuelven Observables, permitiendo un manejo asíncrono de los datos.
  *
@@ -40,15 +40,18 @@ import type { Observable } from "rxjs"
   providedIn: "root",
 })
 export class CharacterService {
-  private apiUrl = "https://rickandmortyapi.com/api/character/?page = 20"
-  private http = inject(HttpClient)
+  private apiUrl = "https://rickandmortyapi.com/api/character";
 
-  getCharacters(): Observable<any> {
-    return this.http.get(this.apiUrl)
+  private http = inject(HttpClient);
+
+  // Método para obtener personajes con paginación
+  getCharacters(page: number = 1): Observable<any> {
+    const params = new HttpParams().set("page", page.toString());
+    return this.http.get<any>(this.apiUrl, { params });
   }
 
+  // Método para obtener los detalles de un personaje específico
   getCharacter(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${id}`)
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 }
-
